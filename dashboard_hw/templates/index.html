@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <header>
+  </header>
+  <body>
+      <div class="container">
+         <div class="row justify-content-center">
+          <div class="col-xl table-responsive-xl" id="dash">
+          <h6 style="font-size:2.5vw">Bacteria Biodiversity Dashboard</h6>
+          
+          <!-- pie chart -->
+          
+        </div>
+        </div>
+    
+    <div class="row justify-content-left">
+        <div class="col-sm" id="dropdown">
+            <select id="select" onChange="optionChanged(this.value)">
+                <option value="default">Select Sample:</option>
+            </select>
+            
+            <script>
+
+                var url = "/names"
+                Plotly.d3.json(url, function(error, response) {
+                if (error) return console.warn(error);
+                console.log(response);
+                
+                var select = document.getElementById("select"),
+                itemArray = response;
+
+                for (var i = 0; i < itemArray.length; i++) {
+
+                    var opt = itemArray[i];
+                    var el = document.createElement("option");
+                    el.textContent = opt;
+                    el.value = opt;
+                    select.appendChild(el);
+    
+                }})
+                // Default Sample
+                var default_url = "/metadata/BB_940";
+                Plotly.d3.json(default_url, function(error, response) {
+                    if (error) return console.warn(error);
+                    
+                    var metaData = response;
+                    var tableData = Object.values(metaData);
+                    console.log(tableData);
+
+                    var headerValues = [];
+                    var cellValues = [];
+
+                    for (i = 0; i < tableData.length; i++) {
+                        headerValues[i] = tableData[0];
+                        // headerValues[i] = headerValue;
+                        for (j = 0; j < tableData[1].length; j++)
+                        cellValue = tableData[1][j];
+                        cellValues[1][j] = cellValue;
+  }
+                
+                    var data = [{
+
+                        type: 'table',
+                        header: {
+                            values: headerValues
+                        },
+                        cells: {
+                            values: cellValues
+                        }
+                    }]
+                    Plotly.plot('graph', data);
+                })    
+                // // Update the plot with new data
+                function updatePlotly(newdata) {
+                    var table = document.getElementById('graph');
+                     console.log(newdata[0])
+                     console.log(newdata[1])  
+                    // var metaSample = [{
+                    // type: 'table',
+                    // header: {
+                    // values: newdata[0]
+                    // },
+                    // cells: {
+                    // values: newdata[1],
+                    // align: ["center", "center"],
+                    // line: {color: "black", width: 1},
+                    // fill: {color: ['rgba(228, 222, 249, 0.65)','rgb(235, 193, 238)', 'rgba(228, 222, 249, 0.65)']},
+                    // font: {family: "Arial", size: 10, color: ["black"]}
+                    // }
+                    // }]
+                    Plotly.restyle('graph', newdata[0])
+                    Plotly.restyle('graph', newdata[1])
+                    }
+                //     // Plotly.restyle('graph', newdata, layout)
+                    
+
+                // Get new data whenever the dropdown selection changes
+                function optionChanged(route) {
+                    console.log(route);
+                    Plotly.d3.json(`metadata/${route}`, function(error, data) {
+                    console.log("newdata", data);
+                                       
+                    updatePlotly(data);
+                            });
+                        }
+
+
+
+                
+            </script>
+            <div id="graph"></div>
+        </div>    
+    </div> 
+</div>   
+<body> 
+    <!-- <script src="static/app.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+</body>
+</html>
